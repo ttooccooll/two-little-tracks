@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Two Little Tracks | Electronic Music</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --primary: #f0f0f0;
+      --accent: #00ff88;
+      --secondary: #1a1a1a;
+      --muted: #666666;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Space Mono', monospace;
+      background: var(--bg);
+      color: var(--primary);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.9), transparent);
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      background: url('artist-image.jpeg') center/cover no-repeat;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10,10,10,0.3) 0%,
+        rgba(10,10,10,0.5) 50%,
+        rgba(10,10,10,0.95) 100%
+      );
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 0 0 150px 50px rgba(0,255,136,0.1);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(3rem, 12vw, 8rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      line-height: 0.9;
+    }
+
+    .hero h1 span {
+      display: block;
+      color: var(--accent);
+    }
+
+    .hero p {
+      margin-top: 1.5rem;
+      font-size: 1rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: bounce 2s infinite;
+    }
+
+    .scroll-indicator span {
+      display: block;
+      width: 20px;
+      height: 20px;
+      border-right: 2px solid var(--muted);
+      border-bottom: 2px solid var(--muted);
+      transform: rotate(45deg);
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(10px); }
+    }
+
+    /* Sections */
+    section {
+      padding: 100px 0;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 3rem;
+      color: var(--accent);
+    }
+
+    /* Music Section */
+    #music {
+      background: var(--secondary);
+    }
+
+    .track-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .track {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.5rem 2rem;
+      background: var(--bg);
+      border: 1px solid transparent;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .track:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(0,255,136,0.1);
+    }
+
+    .track.playing {
+      border-color: var(--accent);
+      box-shadow: 0 0 30px rgba(0,255,136,0.2);
+    }
+
+    .track-play {
+      width: 50px;
+      height: 50px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .track:hover .track-play,
+    .track.playing .track-play {
+      background: var(--accent);
+    }
+
+    .track-play svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--accent);
+      transition: fill 0.3s ease;
+    }
+
+    .track:hover .track-play svg,
+    .track.playing .track-play svg {
+      fill: var(--bg);
+    }
+
+    .track-info {
+      flex: 1;
+    }
+
+    .track-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .track-duration {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* About Section */
+    #about .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .about-image {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      filter: grayscale(30%);
+    }
+
+    .about-text p {
+      margin-bottom: 1.5rem;
+      color: var(--muted);
+    }
+
+    .equipment-list {
+      margin-top: 2rem;
+    }
+
+    .equipment-list h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: var(--accent);
+    }
+
+    .equipment-list ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .equipment-list li {
+      padding: 0.5rem 1rem;
+      background: var(--secondary);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* Contact Section */
+    #contact {
+      text-align: center;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+    }
+
+    .social-links a {
+      color: var(--primary);
+      text-decoration: none;
+      padding: 1rem 2rem;
+      border: 1px solid var(--muted);
+      transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 20px rgba(0,255,136,0.2);
+    }
+
+    .contact-email {
+      color: var(--muted);
+    }
+
+    .contact-email a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Footer */
+    footer {
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+      border-top: 1px solid var(--secondary);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      #about .about-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .about-image {
+        max-height: 400px;
+      }
+
+      section {
+        padding: 60px 0;
+      }
+
+      .social-links {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    /* Mobile nav toggle */
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .menu-toggle span {
+      width: 25px;
+      height: 2px;
+      background: var(--primary);
+      transition: all 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: flex;
+      }
+
+      .nav-links.active {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg);
+        padding: 2rem;
+        gap: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="#" class="logo">Two Little Tracks</a>
+    <ul class="nav-links">
+      <li><a href="#music">Music</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="menu-toggle" aria-label="Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Two Little<br><span>Tracks</span></h1>
+      <p>Electronic Music</p>
+    </div>
+    <div class="scroll-indicator">
+      <span></span>
+    </div>
+  </section>
+
+  <section id="music">
+    <div class="container">
+      <h2 class="section-title">Music</h2>
+      <div class="track-list">
+        <div class="track" data-track="yeahyeahyeah.wav">
+          <button class="track-play" aria-label="Play">
+            <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <svg class="pause-icon" style="display:none" viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>
+          </button>
+          <div class="track-info">
+            <div class="track-title">Yeah Yeah Yeah</div>
+<div class="track-duration">4:15</div>
+          </div>
+        </div>
+
+        <div class="track" data-track="I Haven't Heard It Yet.wav">
+          <button class="track-play" aria-label="Play">
+            <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <svg class="pause-icon" style="display:none" viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>
+          </button>
+          <div class="track-info">
+            <div class="track-title">I Haven't Heard It Yet</div>
+            <div class="track-duration">5:48</div>
+          </div>
+        </div>
+      </div>
+
+      <iframe src="https://directcurrent.space/embed/two-little-tracks" width="100%" height="600" frameborder="0" style="margin-top: 3rem; max-width: 400px;"></iframe>
+
+      <script src="https://directcurrent.space/widget.js" data-product="b4bd17ed-a73f-40e4-a104-04b89ebb3027" data-label="⚡ Buy with Lightning"></script>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="container">
+      <h2 class="section-title">About</h2>
+      <div class="about-grid">
+        <img src="artist-image.jpeg" alt="Two Little Tracks" class="about-image">
+        <div class="about-text">
+          <p>Two Little Tracks is an electronic music project exploring the boundaries between ambient textures and rhythmic experimentation. Drawing influence from Berlin techno, Japanese ambient, and vintage analog synthesis.</p>
+          <p>Each track is crafted with meticulous attention to sound design, creating immersive sonic landscapes that blur the line between dancing and dreaming.</p>
+          <div class="equipment-list">
+            <h3>Equipment</h3>
+            <ul>
+              <li>Moog Sub 37</li>
+              <li>Roland TR-808</li>
+              <li>Roland TB-303</li>
+              <li>Korg MS-20</li>
+              <li>Octatrack</li>
+              <li>Eurorack</li>
+              <li>Neve 1073</li>
+              <li>OTR</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="container">
+      <h2 class="section-title">Contact</h2>
+      <div class="social-links">
+        <a href="https://soundcloud.com" target="_blank" rel="noopener">SoundCloud</a>
+        <a href="https://bandcamp.com" target="_blank" rel="noopener">Bandcamp</a>
+        <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+      </div>
+      <p class="contact-email">Booking: <a href="mailto:booking@twolittletracks.com">booking@twolittletracks.com</a></p>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 Two Little Tracks. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const tracks = document.querySelectorAll('.track');
+    let currentAudio = null;
+    let currentTrack = null;
+
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    tracks.forEach(track => {
+      const trackName = track.dataset.track;
+      const playBtn = track.querySelector('.track-play');
+      const playIcon = track.querySelector('.play-icon');
+      const pauseIcon = track.querySelector('.pause-icon');
+      const durationEl = track.querySelector('.track-duration');
+
+      playBtn.addEventListener('click', () => {
+        if (currentTrack === track) {
+          if (currentAudio.paused) {
+            currentAudio.play();
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'block';
+            track.classList.add('playing');
+          } else {
+            currentAudio.pause();
+            playIcon.style.display = 'block';
+            pauseIcon.style.display = 'none';
+            track.classList.remove('playing');
+          }
+        } else {
+          if (currentAudio) {
+            currentAudio.pause();
+            currentTrack.classList.remove('playing');
+            currentTrack.querySelector('.play-icon').style.display = 'block';
+            currentTrack.querySelector('.pause-icon').style.display = 'none';
+          }
+
+          currentAudio = new Audio(trackName);
+          currentTrack = track;
+
+          currentAudio.addEventListener('loadedmetadata', () => {
+            durationEl.textContent = formatTime(currentAudio.duration);
+          });
+
+          currentAudio.addEventListener('ended', () => {
+            track.classList.remove('playing');
+            playIcon.style.display = 'block';
+            pauseIcon.style.display = 'none';
+          });
+
+          currentAudio.play();
+          playIcon.style.display = 'none';
+          pauseIcon.style.display = 'block';
+          track.classList.add('playing');
+        }
+      });
+    });
+
+    // Mobile menu toggle
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    menuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+
+    // Close mobile menu when link clicked
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+      });
+    });
+  </script>
+</body>
+</html>
