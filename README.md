@@ -4,7 +4,11 @@ Electronic music artist website featuring original tracks and a Lightning Paymen
 
 ## Listen
 
-🎧 [Direct Current Embed](https://directcurrent.space/embed/two-little-tracks)
+[🎧 Direct Current](https://directcurrent.space/embed/two-little-tracks)
+
+<a href="https://directcurrent.space/embed/two-little-tracks" target="_blank">
+  <img src="https://directcurrent.space/embed/two-little-tracks?image" alt="Listen on Direct Current" style="max-width:400px;">
+</a>
 
 ## Tracks
 
